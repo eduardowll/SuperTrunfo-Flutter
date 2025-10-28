@@ -18,12 +18,14 @@ class CartasDB {
       path,
       version: 1,
       onCreate: (db, version) async {
+
         await db.execute('''
           CREATE TABLE card_diario(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             heroId TEXT,
             name TEXT,
             image TEXT,
+            powerstats TEXT,
             date TEXT
           );
         ''');
@@ -33,9 +35,11 @@ class CartasDB {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             heroId TEXT,
             name TEXT,
-            image TEXT
+            image TEXT,
+            powerstats TEXT
           );
         ''');
+
       },
     );
   }

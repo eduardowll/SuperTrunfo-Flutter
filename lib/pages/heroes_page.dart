@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../model/hero.dart';
 import '../service/hero_service.dart';
+import '../widgets/hero_card.dart';
 import 'hero_detail_page.dart';
 
 class HeroesPage extends StatefulWidget {
@@ -55,25 +56,12 @@ class _HeroesPageState extends State<HeroesPage> {
       body: PagedListView<int, HeroModel>(
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<HeroModel>(
-          itemBuilder: (context, hero, index) => Card(
-            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-            child: ListTile(
-              leading: Image.network(
-                hero.images['sm'],
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-              title: Text(hero.name),
-              subtitle: Text(
-                'Força: ${hero.powerstats['strength']}\n'
-                    'Raça: ${hero.appearance['race']}',
-              ),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HeroDetailPage(hero: hero),
-                ),
+          itemBuilder: (context, hero, index) => HeroCard(
+            hero: hero,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HeroDetailPage(hero: hero),
               ),
             ),
           ),

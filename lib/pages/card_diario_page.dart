@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../model/hero.dart';
-import '../service/card_diario_service.dart';
+import '../service/cartas_service.dart';
 import '../widgets/powerstats_box.dart';
+import '../widgets/custom_button.dart';
 
 class CardDiarioPage extends StatefulWidget {
   const CardDiarioPage({super.key});
@@ -11,9 +12,10 @@ class CardDiarioPage extends StatefulWidget {
 }
 
 class _CardDiarioPageState extends State<CardDiarioPage> {
-  final CardDiarioService _service = CardDiarioService();
+  final CartasService _cartasService = CartasService();
   HeroModel? hero;
   bool loading = true;
+  bool adicionando = false;
 
   @override
   void initState() {
@@ -22,19 +24,43 @@ class _CardDiarioPageState extends State<CardDiarioPage> {
   }
 
   Future<void> _carregarCardDoDia() async {
-    final card = await _service.getCardDoDia();
-
+    final carta = await _cartasService.obterCardDoDia();
     setState(() {
-      hero = card;
+      hero = carta;
       loading = false;
     });
   }
 
-  Future<void> _adicionarAColecao() async {
-    if (hero == null) return;
-    final msg = await _service.adicionarAColecao(hero!);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  Future<void> _adicionarNaColecao() async {
+    if (hero == null || adicionando) return;
+
+    setState(() {
+      adicionando = true;
+    });
+
+    final cartas = await _cartasService.getCartas();
+    final existe = cartas.any((c) => c.id == hero!.id);
+    if (existe) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Você já possui esta carta na coleção.')),
+      );
+    } else {
+      final total = await _cartasService.contarCartas();
+      if (total >= 15) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Você já possui 15 cartas na coleção.')),
+        );
+      } else {
+        final msg = await _cartasService.adicionarNaColecao(hero!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg)),
+        );
+      }
+    }
+
+    setState(() {
+      adicionando = false;
+    });
   }
 
   @override
@@ -47,25 +73,30 @@ class _CardDiarioPageState extends State<CardDiarioPage> {
       body: Center(
         child: loading
             ? const CircularProgressIndicator()
-            : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(hero!.images['md'], height: 250),
-            const SizedBox(height: 20),
-            Text(hero!.name,
+            : Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(hero!.images['md'], height: 250),
+              const SizedBox(height: 20),
+              Text(
+                hero!.name,
                 style: const TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-
-
-            PowerStatsBox(stats: hero!.powerstats),
-
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _adicionarAColecao,
-              child: const Text('Adicionar à coleção'),
-            ),
-          ],
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              PowerStatsBox(stats: hero!.powerstats),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: adicionando ? 'Adicionando...' : 'Adicionar à coleção',
+                onPressed: _adicionarNaColecao,
+              ),
+            ],
+          ),
         ),
       ),
     );

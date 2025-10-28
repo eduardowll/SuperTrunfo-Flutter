@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
 import 'card_diario_page.dart';
 import 'heroes_page.dart';
+import 'minhas_cartas_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -46,7 +47,12 @@ class HomePage extends StatelessWidget {
             CustomButton(
               text: 'Minhas Cartas',
               onPressed: () {
-                //Navegar pra tela de cartas
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MinhasCartasPage(),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 16),
