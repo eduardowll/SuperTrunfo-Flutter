@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../service/cartas_service.dart';
 import '../widgets/custom_button.dart';
+import 'batalhar_page.dart';
 import 'card_diario_page.dart';
 import 'heroes_page.dart';
 import 'minhas_cartas_page.dart';
@@ -58,8 +60,14 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 16),
             CustomButton(
               text: 'Batalhar',
-              onPressed: () {
-                //Navegar pra tela de batalha
+              onPressed: () async {
+                final cartas = await CartasService().getCartas();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BatalharPage(minhasCartas: cartas),
+                  ),
+                );
               },
             ),
           ],
