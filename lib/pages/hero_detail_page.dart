@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../model/hero.dart';
 import '../widgets/powerstats_box.dart';
@@ -14,11 +15,13 @@ class HeroDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Image.network(hero.images['md']),
-            const SizedBox(height: 12),
-            Text(
-              hero.biography['fullName'] ?? '',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            CachedNetworkImage(
+              imageUrl: hero.images['md'],
+              height: 250,
+              placeholder: (context, url) =>
+              const CircularProgressIndicator(strokeWidth: 2),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.error, color: Colors.red),
             ),
             const Divider(),
             Text('Gênero: ${hero.appearance['gender']}'),

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import '../model/hero.dart';
 import '../widgets/powerstats_box.dart';
@@ -43,31 +44,26 @@ class _BatalharPageState extends State<BatalharPage> {
     String mensagem;
 
     if (vitorias > derrotas) mensagem = 'Parabéns! Você venceu a batalha!';
-    else if (vitorias < derrotas) mensagem = 'Você perdeu a batalha. Tente de novo!';
+    else if (vitorias < derrotas) mensagem = 'Você perdeu a batalha. Melhore.';
     else mensagem = 'Empate na batalha!';
 
-    showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Fim da Batalha'),
-        content: Text('Vitórias: $vitorias\nDerrotas: $derrotas\nEmpates: $empates\n\n$mensagem'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                filaCartas.shuffle(Random());
-                indice = 0;
-                vitorias = 0;
-                derrotas = 0;
-                empates = 0;
-              });
-            },
-            child: const Text('Reiniciar'),
-          ),
-        ],
-      ),
-    );
+      dialogType: DialogType.info,
+      animType: AnimType.bottomSlide,
+      title: 'Fim da Batalha',
+      desc: 'Vitórias: $vitorias\nDerrotas: $derrotas\nEmpates: $empates\n\n$mensagem',
+      btnOkText: 'Reiniciar',
+      btnOkOnPress: () {
+        setState(() {
+          filaCartas.shuffle(Random());
+          indice = 0;
+          vitorias = 0;
+          derrotas = 0;
+          empates = 0;
+        });
+      },
+    ).show();
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../model/hero.dart';
+import '../service/hero_cache.dart';
 import '../service/hero_service.dart';
 import '../widgets/hero_card.dart';
 import 'hero_detail_page.dart';
@@ -13,7 +14,6 @@ class HeroesPage extends StatefulWidget {
 }
 
 class _HeroesPageState extends State<HeroesPage> {
-  static const _pageSize = 20;
   final PagingController<int, HeroModel> _pagingController =
   PagingController(firstPageKey: 1);
   final HeroService _service = HeroService();
@@ -22,19 +22,20 @@ class _HeroesPageState extends State<HeroesPage> {
   void initState() {
     super.initState();
     _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage();
+      _fetchPage(pageKey);
     });
   }
 
-  Future<void> _fetchPage() async {
+  Future<void> _fetchPage(int pageKey) async {
     try {
-      final allHeroes = await _service.fetchHeroes();
-      final newItems = allHeroes.skip((_pageSize * (_pagingController.itemList?.length ?? 0))).take(_pageSize).toList();
-      if (newItems.length < _pageSize) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        _pagingController.appendPage(newItems, 1);
+      List<HeroModel> allHeroes = await HeroCache.loadHeroes();
+
+      if (allHeroes.isEmpty) {
+        allHeroes = await _service.fetchHeroes();
+        await HeroCache.saveHeroes(allHeroes);
       }
+
+      _pagingController.appendLastPage(allHeroes);
     } catch (e) {
       _pagingController.error = e;
     }
