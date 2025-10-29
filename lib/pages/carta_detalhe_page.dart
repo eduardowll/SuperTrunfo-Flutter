@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 import '../model/hero.dart';
 import '../service/cartas_service.dart';
 import '../widgets/custom_button.dart';
@@ -60,6 +61,10 @@ class CartaDetalhePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             PowerStatsBox(stats: hero.powerstats),
+            if (hero.dataObtencao != null) ...[
+              const SizedBox(height: 12),
+              Text('Data de obtenção: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(hero.dataObtencao!))}'),
+            ],
             const SizedBox(height: 20),
             CustomButton(
               text: 'Abandonar carta',

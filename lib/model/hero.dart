@@ -7,6 +7,7 @@ class HeroModel {
   final Map<String, dynamic> biography;
   final Map<String, dynamic> work;
   final Map<String, dynamic> images;
+  final String? dataObtencao;
 
   HeroModel({
     required this.id,
@@ -17,6 +18,7 @@ class HeroModel {
     required this.biography,
     required this.work,
     required this.images,
+    this.dataObtencao,
   });
 
   factory HeroModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class HeroModel {
       biography: Map<String, dynamic>.from(json['biography'] ?? {}),
       work: Map<String, dynamic>.from(json['work'] ?? {}),
       images: Map<String, dynamic>.from(json['images'] ?? {}),
+      dataObtencao: json['dataObtencao'],
     );
   }
 
@@ -41,6 +44,7 @@ class HeroModel {
     'biography': biography,
     'work': work,
     'images': images,
+    'dataObtencao': dataObtencao,
   };
 }
 

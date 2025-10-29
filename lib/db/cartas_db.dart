@@ -16,30 +16,34 @@ class CartasDB {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
+        await db.execute('''
+      CREATE TABLE card_diario(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        heroId TEXT,
+        name TEXT,
+        image TEXT,
+        powerstats TEXT,
+        date TEXT
+      );
+    ''');
 
         await db.execute('''
-          CREATE TABLE card_diario(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            heroId TEXT,
-            name TEXT,
-            image TEXT,
-            powerstats TEXT,
-            date TEXT
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE colecao(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            heroId TEXT,
-            name TEXT,
-            image TEXT,
-            powerstats TEXT
-          );
-        ''');
-
+      CREATE TABLE colecao(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        heroId TEXT,
+        name TEXT,
+        image TEXT,
+        powerstats TEXT,
+        dataObtencao TEXT
+      );
+    ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE colecao ADD COLUMN dataObtencao TEXT;');
+        }
       },
     );
   }

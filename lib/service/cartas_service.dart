@@ -105,6 +105,7 @@ class CartasService {
       'name': hero.name,
       'image': hero.images['sm'],
       'powerstats': jsonEncode(hero.powerstats),
+      'dataObtencao': DateTime.now().toIso8601String(),
     });
 
     return 'Carta adicionada na coleção!';
@@ -123,8 +124,8 @@ class CartasService {
       biography: {},
       work: {},
       images: {'sm': e['image'], 'md': e['image']},
-    ))
-        .toList();
+      dataObtencao: e['dataObtencao']?.toString(),
+    )).toList();
   }
 
   Future<void> removerCarta(int heroId) async {
